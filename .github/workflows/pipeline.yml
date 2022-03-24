@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -20,24 +22,13 @@ jobs:
           python-version: '3.7.11'
 
       - name: Install Requirements
-        run:  pip install flask pytest flask-wtf
+        run:  pip install flask coverage pytest flask-wtf
 
-      - name: Unit Test
-        run: python -m unittest -v test
-
-  SonarCloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      
       -name: Unit Test
         run: |
           coverage run -m pytest test.py
           coverage xml app.py
-          
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
